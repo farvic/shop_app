@@ -6,7 +6,6 @@ import '../providers/cart.dart';
 
 import 'package:provider/provider.dart';
 
-
 class ProductItem extends StatelessWidget {
   // final String id;
   // final String title;
@@ -24,12 +23,12 @@ class ProductItem extends StatelessWidget {
     final cart = Provider.of<Cart>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
-        child: GridTile(
+      child: GridTile(
         child: GestureDetector(
           onTap: () {
             Navigator.of(context).pushNamed(
               ProductDetailScreen.routeName,
-              arguments: product.id,  
+              arguments: product.id,
             );
           },
           child: Image.network(
@@ -42,16 +41,13 @@ class ProductItem extends StatelessWidget {
           leading: Consumer<Product>(
             builder: (ctx, product, _) => IconButton(
               icon: Icon(
-                product.isFavorite 
-                ? Icons.favorite
-                : Icons.favorite_border,
+                product.isFavorite ? Icons.favorite : Icons.favorite_border,
               ),
               onPressed: () {
                 product.toggleFavoriteStatus();
               },
               color: Theme.of(context).accentColor,
             ),
-
           ),
           title: Text(
             product.title,
@@ -63,6 +59,22 @@ class ProductItem extends StatelessWidget {
             ),
             onPressed: () {
               cart.addItem(product.id, product.price, product.title);
+              Scaffold.of(context).hideCurrentSnackBar();
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Added item to the cart!',
+                    textAlign: TextAlign.center,
+                  ),
+                  duration: Duration(seconds: 2),
+                  action: SnackBarAction(
+                    label: 'UNDO',
+                    onPressed: () {
+                      cart.removeSingleItem(product.id);
+                    },
+                  ),
+                ),
+              );
             },
             color: Theme.of(context).accentColor,
           ),
